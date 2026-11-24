@@ -1,0 +1,16 @@
+NUESTRA PEQUEÑA ETERNIDAD — EDICIÓN NOCTURNA COMPARTIDA
+
+Contenido:
+- index.html: aplicación web de diario compartido.
+- config.js: URL y clave pública de Supabase.
+- supabase_setup.sql: tablas, permisos y bucket privado.
+- GUIA_PARA_COMPARTIR.md: guía paso a paso.
+- assets/: ilustraciones anime y banner floral nocturno.
+
+Inicio rápido:
+1. Extrae el ZIP completo.
+2. Abre index.html para probar el modo local.
+3. Para compartir recuerdos entre dos dispositivos, publica la carpeta en HTTPS y sigue GUIA_PARA_COMPARTIR.md.
+4. No compartas la service_role key. Solo usa la clave pública y políticas RLS.
+
+El modo compartido no queda activado hasta crear y configurar un proyecto propio de Supabase y autorizar las dos cuentas en couple_members.

@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#17131d">
+<title>Nuestra pequeña eternidad ♡</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<style>
+:root{
+ --bg:#17141d;--bg2:#1d1924;--panel:#24202b;--panel2:#29232f;--panel3:#302936;
+ --sidebar:#15121a;--ink:#eee5e1;--muted:#b2a4ab;--muted2:#8f818a;
+ --line:#443642;--line2:#574150;--rose:#c98c9c;--rose2:#a66d82;
+ --mauve:#806b89;--sage:#839078;--sage2:#a5b095;--gold:#c5a879;
+ --shadow:0 16px 42px rgba(0,0,0,.23);--sidebar-w:260px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:
+ radial-gradient(ellipse at 74% 12%,rgba(112,83,109,.13),transparent 32%),
+ radial-gradient(ellipse at 5% 88%,rgba(92,111,83,.10),transparent 30%),
+ var(--bg);color:var(--ink);font-family:"DM Sans",Arial,sans-serif;font-size:14px}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+a{color:inherit;text-decoration:none}
+::selection{background:#755365;color:#fff}
+.app{min-height:100vh}
+.sidebar{position:fixed;inset:0 auto 0 0;width:var(--sidebar-w);z-index:30;background:linear-gradient(180deg,#18141e,#1b1720 55%,#17141c);border-right:1px solid #342b38;padding:20px 15px 18px;display:flex;flex-direction:column;overflow-y:auto}
+.brand{display:flex;align-items:center;gap:11px;padding:3px 8px 20px;border-bottom:1px solid #342b38}
+.brand-logo{width:47px;height:47px;flex-shrink:0;filter:drop-shadow(0 4px 10px #0005)}
+.brand-name{font-family:"Cormorant Garamond",Georgia,serif;font-size:22px;line-height:.95;color:#f1e3e1}
+.brand-sub{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:#a8949b;margin-top:7px}
+.nav-label{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:#987f8e;padding:21px 11px 8px}
+.nav{display:grid;gap:4px}
+.nav button{border:1px solid transparent;background:transparent;color:#c2b5bb;text-align:left;padding:10px 11px;border-radius:11px;display:flex;align-items:center;gap:11px;font-size:12px;transition:.18s}
+.nav button .ico{font-size:16px;width:18px;text-align:center;color:#b58b9c}
+.nav button:hover{background:#2b2430;color:#fff1e9}
+.nav button.active{background:linear-gradient(100deg,#5c4559,#423847);border-color:#6c5060;color:#fff4ed;box-shadow:inset 3px 0 #c58c9a}
+.nav button.active .ico{color:#e3b3b4}
+.sidebar-bottom{margin-top:auto;border:1px solid #3c4a3a;background:linear-gradient(145deg,#28332c,#29232e);border-radius:14px;padding:13px;color:#c8c8b9;font-size:11px;line-height:1.55}
+.sidebar-bottom b{display:block;color:#d8c8c4;font-family:"Cormorant Garamond",serif;font-size:19px;font-weight:500}
+.sidebar-bottom span{color:#a8b39a}
+.main{margin-left:var(--sidebar-w);min-height:100vh}
+.topbar{height:66px;position:sticky;top:0;z-index:20;background:rgba(23,20,29,.91);backdrop-filter:blur(16px);border-bottom:1px solid #342b38;display:flex;align-items:center;justify-content:space-between;padding:0 30px}
+.top-left{display:flex;align-items:center;gap:12px}
+.top-title{font-family:"Cormorant Garamond",Georgia,serif;font-size:24px;color:#eadbd9}
+.top-date{font-size:10px;color:#8f838c}
+.top-right{display:flex;align-items:center;gap:9px}
+.status-pill{display:flex;align-items:center;gap:7px;border:1px solid #3d4939;background:#242d27;color:#bac8b0;border-radius:30px;padding:7px 10px;font-size:10px}
+.status-dot{width:7px;height:7px;border-radius:50%;background:#91a883;box-shadow:0 0 8px #91a88388}
+.round-btn{width:34px;height:34px;border:1px solid #453746;background:#27222e;color:#c7a3ae;border-radius:50%}
+.avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#594455;color:#f2dadb;font-family:"Cormorant Garamond",serif;font-weight:600}
+.content{max-width:1540px;margin:auto;padding:25px 30px 38px}
+.view{display:none;animation:rise .23s ease}
+.view.active{display:block}
+@keyframes rise{from{opacity:.25;transform:translateY(5px)}to{opacity:1;transform:none}}
+h1,h2,h3,p{margin-top:0}
+h1,h2,h3{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500}
+h1{font-size:36px;line-height:1.02;color:#f0e0dd;margin:6px 0}
+h2{font-size:25px;color:#ead9d7;margin:0 0 7px}
+h3{font-size:20px;color:#d8b5b8;margin:0 0 8px}
+.eyebrow{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:#c0919b}
+.subtitle{font-size:12px;line-height:1.65;color:var(--muted);margin:0}
+.page-head{display:flex;align-items:end;justify-content:space-between;gap:14px;margin-bottom:18px;position:relative;padding-bottom:14px}
+.page-head:after{content:"";position:absolute;bottom:0;left:0;width:185px;height:16px;background:url("assets/floral-divider.svg") left center/contain no-repeat;opacity:.5;filter:brightness(.85)}
+.grid{display:grid;gap:15px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.card{position:relative;overflow:hidden;background:linear-gradient(145deg,rgba(42,36,48,.97),rgba(35,31,42,.97));border:1px solid #403541;border-radius:16px;padding:18px;box-shadow:var(--shadow);min-width:0}
+.card:after{content:"";position:absolute;right:-37px;top:-42px;width:125px;height:135px;background:url("assets/flores-nocturnas.svg") center/contain no-repeat;opacity:.15;pointer-events:none}
+.card>*{position:relative;z-index:1}
+.card.soft{background:linear-gradient(145deg,#2b3030,#29242f);border-color:#435047}
+.card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.card-head h2,.card-head h3{margin:0}
+.mini-label{font-size:9px;letter-spacing:.17em;text-transform:uppercase;color:#b78c98}
+.btn{border:1px solid #9b7080;background:linear-gradient(135deg,#9b687b,#80586f);color:#fff0ea;padding:10px 15px;border-radius:9px;font-size:11px;transition:.18s;box-shadow:0 5px 16px #0002}
+.btn:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.btn.secondary{background:#333e34;border-color:#65765f;color:#d9e0d0;box-shadow:none}
+.btn.ghost{background:#29232f;border-color:#4b3a49;color:#cfabb2;box-shadow:none}
+.btn.tiny{padding:7px 10px;font-size:10px}
+.btn-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px}
+.hero{min-height:280px;border-radius:19px;overflow:hidden;position:relative;border:1px solid #55404d;box-shadow:var(--shadow);margin-bottom:16px;background:#211925}
+.hero-bg{position:absolute;inset:0;background:linear-gradient(90deg,rgba(24,19,28,.96) 0%,rgba(29,23,34,.82) 42%,rgba(29,23,34,.10) 100%),url("assets/banner-jardin-nocturno.png") center 44%/cover no-repeat;opacity:.95}
+.hero:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(20,17,24,.47),transparent 48%);pointer-events:none}
+.hero-inner{position:relative;z-index:2;min-height:280px;padding:30px;display:grid;grid-template-columns:1fr 330px;align-items:center;gap:18px}
+.hero-copy{max-width:610px}
+.hero-kicker{display:inline-flex;gap:8px;align-items:center;font-size:9px;letter-spacing:.19em;text-transform:uppercase;color:#d4b6ae;border:1px solid #a47d7b66;background:#241c2a99;border-radius:30px;padding:7px 11px}
+.hero h1{font-size:clamp(37px,4vw,55px);text-shadow:0 4px 18px #0009;margin:14px 0 8px}
+.hero h1 em{font-style:italic;color:#d4a3ab}
+.hero-copy p{max-width:540px;color:#e2d5d2;font-size:12px;line-height:1.7;margin-bottom:7px;text-shadow:0 2px 10px #000}
+.hero-tag{color:#d9c8c4;font-size:10px;margin-top:13px}
+.portrait-stack{display:flex;align-items:center;justify-content:center;gap:12px;position:relative}
+.portrait{width:145px;height:185px;padding:6px;background:linear-gradient(145deg,#d2bd9b,#796276,#a87987);border-radius:8px;box-shadow:0 12px 24px #08060b99;transform:rotate(-5deg);position:relative}
+.portrait:nth-child(2){transform:rotate(5deg);margin-top:28px}
+.portrait img{width:100%;height:100%;object-fit:cover;object-position:center;border-radius:4px;filter:saturate(.85)}
+.portrait-label{position:absolute;bottom:-23px;left:0;right:0;text-align:center;font-family:"Cormorant Garamond",serif;color:#f0d9d5;font-size:15px;text-shadow:0 2px 9px #000}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-bottom:16px}
+.stat{background:linear-gradient(145deg,#292631,#24212b);border:1px solid #423541;border-radius:13px;padding:13px 15px;box-shadow:var(--shadow)}
+.stat span{display:block;font-size:9px;letter-spacing:.13em;color:#a4949e;text-transform:uppercase;margin-bottom:6px}
+.stat strong{font-family:"Cormorant Garamond",serif;font-size:27px;font-weight:500;color:#d8b5b8}
+.stat small{color:#8fa083;font-size:9px;margin-left:5px}
+.home-row{display:grid;grid-template-columns:1.05fr .95fr;gap:15px;margin-bottom:15px}
+.story-copy{font-size:12px;line-height:1.75;color:#c1b3b9}
+.quote{font-family:"Cormorant Garamond",serif;font-size:19px;font-style:italic;color:#d1a2ac;border-left:2px solid #8d687c;padding:5px 0 5px 13px;margin:14px 0 0}
+.photo-stack{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.photo-tile{height:130px;padding:5px;background:#d8c6b0;border-radius:6px;box-shadow:0 7px 15px #0005;transform:rotate(-2deg)}
+.photo-tile:nth-child(2){transform:rotate(2deg);margin-top:10px}
+.photo-tile:nth-child(3){transform:rotate(-1deg)}
+.photo-tile img{width:100%;height:100%;object-fit:cover;border-radius:3px;filter:saturate(.78)}
+.caption{font-size:10px;color:#9d8e97;margin-top:12px}
+.tradition-feature{display:flex;align-items:center;gap:13px}
+.tradition-icon{width:43px;height:43px;border:1px solid #5c4a50;border-radius:13px;background:linear-gradient(145deg,#3b3838,#303b32);display:grid;place-items:center;font-size:20px;flex-shrink:0}
+.tradition-feature p{font-size:11px;line-height:1.55;color:#b6a9af;margin:4px 0}
+.dream-mini{display:grid;gap:8px}
+.dream-mini label{display:flex;gap:8px;align-items:flex-start;color:#c4b6bb;font-size:11px;line-height:1.4}
+.dream-mini input,.check input{width:auto;accent-color:#91a07e;margin-top:2px}
+.form{display:grid;gap:10px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label.field{display:grid;gap:6px;color:#b89aa5;font-size:10px}
+input,textarea,select{width:100%;border:1px solid #4a3c49;border-radius:9px;background:#1d1a23;color:#eee2df;padding:10px 11px;outline-color:#a77b8c;font:12px "DM Sans",sans-serif}
+input::placeholder,textarea::placeholder{color:#796d78}
+textarea{min-height:95px;resize:vertical;line-height:1.6}
+input[type=file]{padding:8px}
+.item-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.item{background:#28232e;border:1px solid #463744;border-radius:13px;padding:13px;min-width:0;box-shadow:0 7px 16px #0002}
+.item img{width:100%;max-height:225px;object-fit:cover;border-radius:8px;margin:2px 0 8px}
+.item small{font-size:9px;color:#b38a98;letter-spacing:.05em}
+.item h3{font-size:19px;margin:5px 0;color:#dec0c2}
+.item p{font-size:11px;line-height:1.6;color:#b9adb3;margin:6px 0;white-space:pre-wrap;overflow-wrap:anywhere}
+.item-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:8px}
+.text-link{border:0;background:none;padding:0;color:#c28fa0;font-size:10px;text-decoration:underline}
+.empty{padding:24px 15px;text-align:center;border:1px dashed #554452;border-radius:13px;color:#a697a0;font-size:11px;line-height:1.7;grid-column:1/-1}
+.progress{height:7px;background:#3b333d;border-radius:20px;overflow:hidden;margin:11px 0}
+.progress b{height:100%;display:block;background:linear-gradient(90deg,#829378,#c18c9a);width:0}
+.check-list{display:grid;gap:4px}
+.check{display:flex;gap:9px;align-items:flex-start;padding:9px 10px;border-bottom:1px solid #3c333e;color:#c9bbc0;font-size:11px;line-height:1.45}
+.check.done span{text-decoration:line-through;opacity:.5}
+.timeline{border-left:2px solid #6d5266;margin:10px 0 0 9px;padding-left:17px;display:grid;gap:11px}
+.timeline .item{position:relative}
+.timeline .item:before{content:"";position:absolute;left:-24px;top:14px;width:9px;height:9px;border-radius:50%;background:#c58c9b;border:3px solid #302631}
+.calendar-head{display:flex;justify-content:space-between;align-items:center;color:#d1b5bc;margin-bottom:12px}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;font-size:10px}
+.calendar-grid span{padding:8px 0;border-radius:8px;color:#b8aab1}
+.calendar-grid .day{color:#927f8c;font-size:9px}
+.calendar-grid .marked{background:#46513f;color:#e0e6d8;outline:1px solid #829375}
+.question-box{background:linear-gradient(145deg,#302735,#2c3030);border:1px solid #65505e;border-radius:16px;padding:26px;text-align:center}
+.question-box p{font-family:"Cormorant Garamond",serif;color:#e3cbd0;font-size:27px;line-height:1.35;max-width:660px;margin:13px auto 19px}
+.note-box{border-left:2px solid #8d7181;background:#292530;padding:14px 16px;border-radius:0 11px 11px 0;color:#c5b5bc;font-size:12px;line-height:1.7}
+.sync-panel{background:linear-gradient(145deg,#262e29,#2b2530);border:1px solid #465542;border-radius:15px;padding:16px}
+.sync-panel h3{color:#c9d1bd}
+.sync-state{display:flex;align-items:center;gap:8px;color:#c2cdb9;font-size:11px}
+.sync-dot{width:8px;height:8px;border-radius:50%;background:#8fa27d;box-shadow:0 0 9px #8fa27d77}
+.auth-box{border:1px solid #4c3d4c;background:#211d27;border-radius:12px;padding:14px;margin-top:12px}
+.auth-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.guide-list{display:grid;gap:11px;counter-reset:step}
+.guide-step{display:grid;grid-template-columns:30px 1fr;gap:11px;align-items:start}
+.guide-step b{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:#3a4739;border:1px solid #6d8266;color:#d8e0cf;font-size:11px}
+.guide-step p{font-size:11px;line-height:1.6;color:#c0b4b9;margin:2px 0}
+.code{font:10px/1.5 monospace;white-space:pre-wrap;overflow-wrap:anywhere;background:#17151c;border:1px solid #423543;border-radius:9px;padding:12px;color:#d2c0c4}
+.toast{position:fixed;right:20px;bottom:20px;z-index:60;padding:12px 16px;background:#3b4938;border:1px solid #6f8467;color:#edf2e5;border-radius:10px;box-shadow:var(--shadow);font-size:11px;opacity:0;transform:translateY(8px);transition:.2s;pointer-events:none}
+.toast.show{opacity:1;transform:none}
+.footer{text-align:center;padding:26px 0 5px;color:#8f818d;font-family:"Cormorant Garamond",serif;font-size:16px}
+.footer em{color:#bb909b}
+.mobile-nav{display:none}
+hr{border:0;border-top:1px solid #443744;margin:15px 0}
+@media(max-width:1120px){:root{--sidebar-w:230px}.content{padding:22px}.hero-inner{grid-template-columns:1fr 275px}.portrait{width:122px;height:165px}.g3,.item-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){
+ .sidebar{position:sticky;top:0;width:100%;height:auto;padding:9px 12px 8px;border-right:0;border-bottom:1px solid #382c3a;overflow:visible;background:#17131d}
+ .brand{padding:0;border:0}.brand-logo{width:36px;height:36px}.brand-name{font-size:19px}.brand-sub{display:none}
+ .sidebar .nav-label,.sidebar .nav,.sidebar-bottom{display:none}
+ .mobile-nav{display:flex;gap:5px;overflow-x:auto;padding:9px 0 0}
+ .mobile-nav button{white-space:nowrap;border:1px solid #493847;background:#27212c;color:#c8b8c0;border-radius:30px;padding:7px 10px;font-size:10px}
+ .mobile-nav button.active{background:#4a3948;color:#f5e1df;border-color:#8a687d}
+ .main{margin-left:0}.topbar{height:48px;padding:0 14px}.top-title{font-size:20px}.top-date{display:none}.status-pill{font-size:9px;padding:6px 8px}
+ .content{padding:16px 13px 28px}.hero-inner{grid-template-columns:1fr;padding:21px;gap:17px}.hero{min-height:unset}.hero-copy{max-width:none}.hero h1{font-size:39px}.portrait-stack{justify-content:flex-start;padding:6px 0 20px 10px}.portrait{width:105px;height:132px}.hero-bg{background-position:55% center}
+ .stats{gap:7px}.stat{padding:10px}.stat strong{font-size:22px}.stat span{font-size:8px}.home-row,.g2,.g3,.g4,.item-grid{grid-template-columns:1fr}
+ .form-row,.auth-grid{grid-template-columns:1fr}.page-head{align-items:flex-start;flex-direction:column}
+ .question-box p{font-size:23px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+ <div class="brand">
+  <svg class="brand-logo" viewBox="0 0 100 100" aria-label="Logo G corazón S">
+   <defs><linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d5bd91"/><stop offset="1" stop-color="#92758a"/></linearGradient></defs>
+   <circle cx="50" cy="50" r="44" stroke="url(#gold)" stroke-width="1.5" fill="#27202c"/>
+   <circle cx="50" cy="50" r="37" stroke="#987681" stroke-dasharray="2 4" fill="none"/>
+   <g fill="none" stroke="#a5b18f" stroke-width="1.8" stroke-linecap="round">
+    <path d="M15 50c9-2 13-9 13-17-8 3-13 9-13 17Zm70 0c-9-2-13-9-13-17 8 3 13 9 13 17ZM50 14c-2 9-9 13-17 13 3-8 9-13 17-13Zm0 72c-2-9-9-13-17-13 3 8 9 13 17 13Z"/>
+   </g>
+   <path d="M50 37c-7-10-20-4-17 7 2 7 11 13 17 18 6-5 15-11 17-18 3-11-10-17-17-7Z" fill="#b5798b" stroke="#e0b8b4" stroke-width="1.5"/>
+   <text x="50" y="74" text-anchor="middle" fill="#e9d8d5" font-family="Georgia" font-size="9" letter-spacing="2">G · S</text>
+  </svg>
+  <div><div class="brand-name">Nuestra pequeña<br>eternidad</div><div class="brand-sub">un jardín entre dos distancias</div></div>
+ </div>
+ <div class="nav-label">Nuestro espacio</div>
+ <div class="nav" id="sideNav">
+  <button class="active" data-view="home"><span class="ico">⌂</span>Inicio</button>
+  <button data-view="story"><span class="ico">♡</span>Nuestra historia</button>
+  <button data-view="album"><span class="ico">▧</span>Álbum de fotos</button>
+  <button data-view="calendar"><span class="ico">▦</span>Calendario</button>
+  <button data-view="letters"><span class="ico">✉</span>Cartas secretas</button>
+  <button data-view="songs"><span class="ico">♫</span>Canciones</button>
+  <button data-view="capsule"><span class="ico">◷</span>Cápsula del tiempo</button>
+  <button data-view="museum"><span class="ico">✧</span>Nuestro museo</button>
+ </div>
+ <div class="nav-label">Lo que soñamos</div>
+ <div class="nav">
+  <button data-view="questions"><span class="ico">☾</span>Preguntas para dos</button>
+  <button data-view="dreams"><span class="ico">☆</span>Lista de sueños</button>
+  <button data-view="traditions"><span class="ico">❀</span>Tradiciones</button>
+  <button data-view="timeline"><span class="ico">⌁</span>Línea del tiempo</button>
+  <button data-view="secret"><span class="ico">♧</span>Espacio secreto</button>
+  <button data-view="settings"><span class="ico">⚙</span>Configuración y guía</button>
+ </div>
+ <div class="sidebar-bottom"><b>Un jardín entre dos distancias</b>Los kilómetros separan los lugares, no los recuerdos que elegimos guardar. <span>♡ Gabriel &amp; Salma</span></div>
+ <div class="mobile-nav" id="mobileNav">
+  <button class="active" data-view="home">Inicio</button><button data-view="story">Historia</button><button data-view="album">Álbum</button><button data-view="calendar">Fechas</button><button data-view="letters">Cartas</button><button data-view="songs">Canciones</button><button data-view="capsule">Cápsula</button><button data-view="museum">Museo</button><button data-view="questions">Preguntas</button><button data-view="dreams">Sueños</button><button data-view="traditions">Tradiciones</button><button data-view="timeline">Línea del tiempo</button><button data-view="secret">Secreto</button><button data-view="settings">Ajustes</button>
+ </div>
+</aside>
+
+<div class="main">
+<header class="topbar">
+ <div class="top-left"><span class="top-title" id="topTitle">Inicio</span><span class="top-date" id="todayLabel"></span></div>
+ <div class="top-right"><div class="status-pill" id="syncBadge"><span class="status-dot"></span><span id="syncBadgeText">Modo local</span></div><button class="round-btn" title="Exportar recuerdos" onclick="exportData()">⇩</button><div class="avatar" title="Gabriel y Salma">G♡S</div></div>
+</header>
+
+<main class="content">
+<!-- HOME -->
+<section class="view active" id="view-home">
+ <div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-inner">
+   <div class="hero-copy">
+    <span class="hero-kicker">✦ un diario de dos corazones ✦</span>
+    <h1>Nuestra pequeña<br><em>eternidad</em> ♡</h1>
+    <p>Un rincón para encontrarnos entre palabras, fotografías y recuerdos. Aunque haya distancia, siempre podemos construir momentos que nos acerquen.</p>
+    <div class="btn-row"><button class="btn" onclick="showView('album')">Guardar un recuerdo ♡</button><button class="btn secondary" onclick="showView('settings')">Conectar nuestro espacio</button></div>
+    <div class="hero-tag">✧ Gabriel &amp; Salma · desde el 22 de julio ✧</div>
+   </div>
+   <div class="portrait-stack">
+    <div class="portrait"><img src="assets/pareja-luna.png" alt="Ilustración anime de Gabriel y Salma"><span class="portrait-label">Tú y yo…</span></div>
+    <div class="portrait"><img src="assets/portada-scrapbook.png" alt="Ilustración anime romántica de la pareja"><span class="portrait-label">siempre creando ♡</span></div>
+   </div>
+  </div>
+ </div>
+ <div class="stats">
+  <div class="stat"><span>FECHA QUE NOS UNE</span><strong>22 de julio</strong><small>♡</small></div>
+  <div class="stat"><span>RECUERDOS GUARDADOS</span><strong id="statMemories">0</strong><small>momentos</small></div>
+  <div class="stat"><span>SUEÑOS CUMPLIDOS</span><strong id="statDreams">0</strong><small>juntos</small></div>
+ </div>
+ <div class="home-row">
+  <article class="card">
+   <div class="card-head"><div><div class="mini-label">Capítulo uno</div><h2>Nuestra historia ♡</h2></div><button class="btn ghost tiny" onclick="showView('story')">Leer más</button></div>
+   <p class="story-copy" id="homeStory">Todo comenzó un 22 de julio. Desde entonces hemos compartido conversaciones, risas, aprendizajes y pequeños momentos que poco a poco se han convertido en parte de nuestra historia.</p>
+   <p class="quote">«Aunque haya distancia, seguimos encontrando formas de estar presentes»</p>
+  </article>
+  <article class="card">
+   <div class="card-head"><div><div class="mini-label">Nuestra colección</div><h2>El álbum de recuerdos</h2></div><button class="btn ghost tiny" onclick="showView('album')">Ver álbum</button></div>
+   <div class="photo-stack"><div class="photo-tile"><img src="assets/pareja-luna.png" alt=""></div><div class="photo-tile"><img src="assets/portada-scrapbook.png" alt=""></div><div class="photo-tile"><img src="assets/pareja-luna.png" alt=""></div></div>
+   <div class="caption">Un espacio para fotografías, capturas y momentos especiales.</div>
+  </article>
+ </div>
+ <div class="grid g3">
+  <article class="card">
+   <div class="card-head"><div><div class="mini-label">Nuestra fecha</div><h2>Calendario</h2></div><span>✧</span></div>
+   <div class="calendar-head"><button class="btn ghost tiny" onclick="changeMonth(-1)">‹</button><strong id="calendarMonth">Mes</strong><button class="btn ghost tiny" onclick="changeMonth(1)">›</button></div>
+   <div class="calendar-grid" id="calendarGrid"></div><div class="caption">El día 22 tiene un pequeño corazón.</div>
+   <button class="btn secondary tiny" style="margin-top:10px" onclick="showView('calendar')">Ver fechas</button>
+  </article>
+  <article class="card">
+   <div class="card-head"><div><div class="mini-label">Nuestro ritual</div><h2>El día 22</h2></div><span>❀</span></div>
+   <div class="tradition-feature"><div class="tradition-icon">💌</div><div><h3>Una carta y una foto</h3><p>Una canción, un recuerdo y un ratito para celebrar nuestro camino.</p></div></div>
+   <button class="btn secondary tiny" style="margin-top:10px" onclick="showView('traditions')">Ver tradiciones</button>
+  </article>
+  <article class="card">
+   <div class="card-head"><div><div class="mini-label">Planes por cumplir</div><h2>Nuestros sueños</h2></div><span>☆</span></div>
+   <div class="dream-mini" id="homeDreams"></div><div class="caption" id="homeDreamCount"></div>
+   <button class="btn secondary tiny" style="margin-top:10px" onclick="showView('dreams')">Ver lista</button>
+  </article>
+ </div>
+ <div class="card" style="margin-top:15px">
+  <div class="card-head"><div><div class="mini-label">Hace poco</div><h2>Recuerdos recientes</h2></div><button class="btn ghost tiny" onclick="showView('album')">Agregar recuerdo</button></div>
+  <div id="recentMemories" class="item-grid"></div>
+ </div>
+</section>
+
+<section class="view" id="view-story">
+ <div class="page-head"><div><div class="eyebrow">Capítulo uno</div><h1>Nuestra historia</h1><p class="subtitle">Cómo comenzó todo y cómo seguimos escribiendo los siguientes capítulos.</p></div></div>
+ <div class="grid g2">
+  <article class="card"><div class="mini-label">Un comienzo que queremos conservar</div><h2>Érase una vez, nosotros…</h2><label class="field">Nuestra historia<textarea id="storyEditor" style="min-height:230px">Todo comenzó un 22 de julio. Desde entonces hemos compartido mensajes, risas, aprendizajes y momentos que poco a poco se han convertido en parte de nuestra historia. Aquí podemos escribir cómo nos conocimos, qué recordamos de aquellos primeros días y qué significa este camino para nosotros.</textarea></label><div class="btn-row"><button class="btn" onclick="saveStory()">Guardar historia compartida</button></div></article>
+  <article class="card" style="padding:8px"><img src="assets/pareja-luna.png" alt="Ilustración de la pareja" style="width:100%;height:100%;min-height:320px;object-fit:cover;border-radius:10px"></article>
+ </div>
+ <div class="grid g3" style="margin-top:15px"><article class="card"><h3>La primera conversación</h3><p class="subtitle">¿Qué recuerdan de aquel día? ¿Quién habló primero?</p></article><article class="card"><h3>Un momento especial</h3><p class="subtitle">Ese instante en que sintieron que estaban construyendo algo bonito.</p></article><article class="card"><h3>Los capítulos que vienen</h3><p class="subtitle">Los planes y sueños que irán escribiendo con el tiempo.</p></article></div>
+</section>
+
+<section class="view" id="view-album">
+ <div class="page-head"><div><div class="eyebrow">Nuestra colección</div><h1>Álbum de fotografías</h1><p class="subtitle">Suban una imagen, pongan fecha y escriban qué la hace especial.</p></div></div>
+ <div class="card"><div class="card-head"><h2>Guardar un recuerdo nuevo</h2><span>✧</span></div><div class="form">
+  <div class="form-row"><label class="field">Título<input id="memTitle" placeholder="Ej. Nuestra videollamada de hoy"></label><label class="field">Fecha<input id="memDate" type="date"></label></div>
+  <label class="field">La historia detrás de la foto<textarea id="memDesc" placeholder="¿Qué pasó? ¿Qué quieren recordar?"></textarea></label>
+  <label class="field">Fotografía (opcional)<input id="memPhoto" type="file" accept="image/*"></label>
+  <div class="btn-row"><button class="btn" onclick="addMemory()">Guardar recuerdo ♡</button><span class="caption" id="photoModeHint">En modo local la foto queda en este navegador; en modo compartido se sube al álbum privado.</span></div>
+ </div></div>
+ <div class="page-head" style="margin-top:22px"><div><h2>Todos nuestros recuerdos</h2><p class="subtitle">Cada tarjeta conserva su propia historia.</p></div></div>
+ <div id="memoryList" class="item-grid"></div>
+</section>
+
+<section class="view" id="view-calendar">
+ <div class="page-head"><div><div class="eyebrow">Fechas que nos unen</div><h1>Nuestro calendario</h1><p class="subtitle">El día 22, los aniversarios y todos esos momentos que queremos conservar.</p></div></div>
+ <div class="grid g2">
+  <article class="card"><div class="calendar-head"><button class="btn ghost tiny" onclick="changeMonth(-1)">‹ Anterior</button><strong id="calendarMonthBig"></strong><button class="btn ghost tiny" onclick="changeMonth(1)">Siguiente ›</button></div><div class="calendar-grid" id="calendarGridBig"></div><p class="caption">El 22 aparece marcado con un corazón. Las fechas personales se guardan en la línea del tiempo.</p></article>
+  <article class="card"><div class="mini-label">Nuestra fecha especial</div><h2>22 de julio ♡</h2><p class="subtitle" style="line-height:1.8">Un día para mirar atrás, agradecer por lo vivido y guardar una nueva parte de nuestra historia.</p><div class="note-box" style="margin-top:14px">Cada mes pueden elegir una fotografía, escribirse una carta y dedicar una canción que represente ese capítulo.</div><button class="btn secondary tiny" style="margin-top:13px" onclick="showView('traditions')">Ver ritual del día 22</button></article>
+ </div>
+ <div class="card" style="margin-top:15px"><h2>Fechas guardadas</h2><div id="calendarEvents" class="item-grid" style="margin-top:12px"></div></div>
+</section>
+
+<section class="view" id="view-letters">
+ <div class="page-head"><div><div class="eyebrow">Palabras que se quedan</div><h1>Cartas secretas</h1><p class="subtitle">Mensajes para un día especial, para cuando se extrañen o simplemente porque sí.</p></div></div>
+ <div class="grid g2">
+  <article class="card"><h2>Escribir una carta</h2><div class="form"><label class="field">Título<input id="letterTitle" placeholder="Para cuando nos extrañemos"></label><label class="field">De parte de<input id="letterFrom" placeholder="Gabriel, Salma o ambos"></label><label class="field">Mensaje<textarea id="letterBody" placeholder="Escribe aquí lo que quieras conservar…"></textarea></label><button class="btn" onclick="addLetter()">Guardar carta ♡</button></div></article>
+  <article class="card"><div class="mini-label">Ideas para escribir</div><h2>Cartas para distintos momentos</h2><div class="note-box">♡ Para un día difícil: palabras de apoyo y calma.<br><br>♡ Para cuando se extrañen: un recuerdo y un plan futuro.<br><br>♡ Para el aniversario: lo que sienten hoy y lo que desean construir.</div></article>
+ </div>
+ <div class="item-grid" id="letterList" style="margin-top:15px"></div>
+</section>
+
+<section class="view" id="view-songs">
+ <div class="page-head"><div><div class="eyebrow">La banda sonora</div><h1>Nuestras canciones</h1><p class="subtitle">Una canción para recordar cada etapa de nuestra historia.</p></div></div>
+ <div class="card"><h2>Agregar una canción</h2><div class="form"><div class="form-row"><label class="field">Canción<input id="songName" placeholder="Título"></label><label class="field">Artista<input id="songArtist" placeholder="Artista"></label></div><label class="field">Mes o fecha<input id="songDate" placeholder="Ej. Noviembre 2026"></label><label class="field">¿Qué significa para nosotros?<textarea id="songWhy" placeholder="El recuerdo que nos trae…"></textarea></label><button class="btn" onclick="addSong()">Guardar canción</button></div></div>
+ <div id="songList" class="item-grid" style="margin-top:15px"></div>
+</section>
+
+<section class="view" id="view-capsule">
+ <div class="page-head"><div><div class="eyebrow">Un mensaje desde el pasado</div><h1>Cápsula del tiempo</h1><p class="subtitle">Cartas y predicciones para abrir en una fecha futura.</p></div></div>
+ <div class="grid g2"><article class="card"><h2>Guardar un mensaje futuro</h2><div class="form"><label class="field">Título<input id="capsuleTitle" placeholder="Para nuestros yo del futuro"></label><label class="field">Fecha para abrir<input id="capsuleDate" type="date"></label><label class="field">Mensaje<textarea id="capsuleBody" placeholder="¿Qué queremos contarle a nuestro futuro?"></textarea></label><button class="btn" onclick="addCapsule()">Guardar en la cápsula</button></div></article><article class="card soft" style="display:grid;place-items:center;text-align:center"><div><div style="font-size:40px;color:#c5a879">⌛</div><h2>Un pequeño mensaje para el futuro</h2><p class="subtitle">Podrán abrirlo cuando llegue la fecha que eligieron.</p></div></article></div>
+ <div id="capsuleList" class="item-grid" style="margin-top:15px"></div>
+</section>
+
+<section class="view" id="view-museum">
+ <div class="page-head"><div><div class="eyebrow">Nuestra colección especial</div><h1>Nuestro pequeño museo</h1><p class="subtitle">Audios, regalos, bromas internas y detalles que cuentan nuestra historia.</p></div></div>
+ <div class="grid g3"><article class="card"><div class="tradition-icon">🎙️</div><h3>Audios favoritos</h3><p class="subtitle">Voces, risas y mensajes para volver a escuchar.</p></article><article class="card"><div class="tradition-icon">🎁</div><h3>Regalos y detalles</h3><p class="subtitle">Fotografías de regalos, dibujos y pequeños gestos.</p></article><article class="card"><div class="tradition-icon">😂</div><h3>Momentos graciosos</h3><p class="subtitle">Memes, bromas internas y anécdotas.</p></article><article class="card"><div class="tradition-icon">🗺️</div><h3>Lugares por conocer</h3><p class="subtitle">Sitios que queremos visitar algún día.</p></article><article class="card"><div class="tradition-icon">🌷</div><h3>Pequeñas cosas</h3><p class="subtitle">Frases, apodos, fechas y detalles cotidianos.</p></article><article class="card"><div class="tradition-icon">🦋</div><h3>Recuerdos favoritos</h3><p class="subtitle">Todo lo que no cabe en otra categoría.</p></article></div>
+ <div class="card" style="margin-top:15px"><h2>Agregar una pieza al museo</h2><div class="form"><div class="form-row"><label class="field">Nombre<input id="museumTitle" placeholder="Ej. Nuestro primer dibujo"></label><label class="field">Categoría<input id="museumType" placeholder="Regalo, audio, broma…"></label></div><label class="field">Su historia<textarea id="museumDesc" placeholder="¿Por qué es importante?"></textarea></label><button class="btn" onclick="addMuseum()">Guardar en el museo</button></div><div id="museumList" class="item-grid" style="margin-top:13px"></div></div>
+</section>
+
+<section class="view" id="view-questions">
+ <div class="page-head"><div><div class="eyebrow">Conocernos siempre un poco más</div><h1>Preguntas para dos</h1><p class="subtitle">Una pregunta para conversar sin prisa, incluso a kilómetros de distancia.</p></div></div>
+ <div class="question-box"><div class="mini-label">Pregunta al azar</div><p id="questionText">¿Cuál ha sido tu recuerdo favorito de nosotros hasta ahora?</p><button class="btn" onclick="nextQuestion()">Otra pregunta ♡</button></div>
+ <div class="grid g3" style="margin-top:15px"><article class="card"><h3>Recuerdos</h3><p class="subtitle">¿Qué momento te gustaría repetir? ¿Qué detalle recuerdas con cariño?</p></article><article class="card"><h3>Distancia</h3><p class="subtitle">¿Qué pequeño gesto te hace sentir cerca cuando estamos lejos?</p></article><article class="card"><h3>Sueños</h3><p class="subtitle">¿Qué experiencia te emociona compartir algún día?</p></article></div>
+</section>
+
+<section class="view" id="view-dreams">
+ <div class="page-head"><div><div class="eyebrow">Planes por cumplir</div><h1>Nuestra lista de sueños</h1><p class="subtitle">Pequeñas y grandes experiencias que nos gustaría compartir.</p></div></div>
+ <div class="card"><div class="card-head"><h2>Un sueño a la vez</h2><span id="dreamSummary" class="mini-label"></span></div><div class="progress"><b id="dreamProgress"></b></div><div id="dreamList" class="check-list"></div><div class="form-row" style="margin-top:14px"><label class="field">Agregar un sueño<input id="dreamInput" placeholder="Algo que queremos hacer juntos…"></label><div style="display:flex;align-items:end"><button class="btn" onclick="addDream()">Agregar sueño</button></div></div></div>
+</section>
+
+<section class="view" id="view-traditions">
+ <div class="page-head"><div><div class="eyebrow">Pequeños rituales</div><h1>Nuestras tradiciones</h1><p class="subtitle">Costumbres que podemos adaptar y disfrutar a nuestra manera, sin convertirlas en obligaciones.</p></div></div>
+ <div class="grid g3"><article class="card"><div class="tradition-icon">💌</div><h3>El día 22</h3><p class="subtitle">Una carta, una foto, una canción y un recuerdo del mes.</p></article><article class="card"><div class="tradition-icon">🎶</div><h3>La canción del mes</h3><p class="subtitle">Elegir una canción que represente esta etapa.</p></article><article class="card"><div class="tradition-icon">🌙</div><h3>Preguntas de domingo</h3><p class="subtitle">Hacernos preguntas curiosas y bonitas.</p></article><article class="card"><div class="tradition-icon">📷</div><h3>La foto mensual</h3><p class="subtitle">Elegir una imagen y escribir su historia.</p></article><article class="card"><div class="tradition-icon">🎬</div><h3>El vídeo anual</h3><p class="subtitle">Un montaje con fotos, audios y canciones del año.</p></article><article class="card"><div class="tradition-icon">🕯️</div><h3>La cápsula del tiempo</h3><p class="subtitle">Guardar una carta para abrirla en el futuro.</p></article></div>
+ <div class="card" style="margin-top:15px"><h2>Crear una tradición propia</h2><div class="form"><div class="form-row"><label class="field">Nombre<input id="tradTitle" placeholder="Ej. Nuestra noche de estrellas"></label><label class="field">Frecuencia<input id="tradWhen" placeholder="Una vez al mes"></label></div><label class="field">¿En qué consiste?<textarea id="tradDesc" placeholder="Describe la tradición…"></textarea></label><button class="btn" onclick="addTradition()">Guardar tradición</button></div><div id="traditionList" class="item-grid" style="margin-top:13px"></div></div>
+</section>
+
+<section class="view" id="view-timeline">
+ <div class="page-head"><div><div class="eyebrow">Los capítulos de nosotros</div><h1>Línea del tiempo</h1><p class="subtitle">Fechas y momentos que marcan nuestra historia.</p></div></div>
+ <div class="card"><h2>Agregar una fecha importante</h2><div class="form"><div class="form-row"><label class="field">Fecha<input id="eventDate" type="date"></label><label class="field">Nombre del momento<input id="eventTitle" placeholder="Nuestro primer…"></label></div><label class="field">¿Qué pasó ese día?<textarea id="eventDesc" placeholder="Escribe un pequeño recuerdo…"></textarea></label><button class="btn" onclick="addEvent()">Guardar momento</button></div><div id="timelineList" class="timeline" style="margin-top:20px"></div></div>
+</section>
+
+<section class="view" id="view-secret">
+ <div class="page-head"><div><div class="eyebrow">Un rinconcito de los dos</div><h1>Espacio secreto</h1><p class="subtitle">Un mensaje especial que podemos cambiar cuando queramos.</p></div></div>
+ <div class="grid g2"><article class="card"><div class="mini-label">Algo que no queremos olvidar</div><h2>Un mensaje para nosotros</h2><label class="field">Nuestro mensajito<textarea id="secretText" style="min-height:180px">Gracias por formar parte de mis días. Que nunca nos falten motivos para reír, hablar con sinceridad y seguir creando recuerdos bonitos, a nuestro ritmo. ♡</textarea></label><button class="btn" style="margin-top:10px" onclick="saveSecret()">Guardar mensaje</button></article><article class="card soft" style="display:grid;place-items:center;text-align:center"><div><div style="font-size:45px">🦋</div><h2>Incluso desde lejos</h2><p class="subtitle">Hay detalles pequeños que hacen que la distancia se sienta un poquito menos grande.</p></div></article></div>
+</section>
+
+<section class="view" id="view-settings">
+ <div class="page-head"><div><div class="eyebrow">Dos dispositivos, un mismo espacio</div><h1>Configuración y guía</h1><p class="subtitle">Conecta una base de datos para que Gabriel y Salma puedan guardar y ver los mismos recuerdos desde cualquier lugar.</p></div></div>
+ <div class="grid g2">
+  <article class="card">
+   <div class="card-head"><h2>Espacio compartido</h2><span class="status-pill" id="connectionState"><span class="status-dot"></span><span>Modo local</span></span></div>
+   <p class="subtitle">La sincronización usa Supabase con inicio de sesión individual. Cada cuenta debe estar autorizada para entrar al espacio de pareja.</p>
+   <div class="form" style="margin-top:14px">
+    <label class="field">URL del proyecto Supabase<input id="supabaseUrl" placeholder="https://tu-proyecto.supabase.co"></label>
+    <label class="field">Clave pública (anon / publishable)<input id="supabaseKey" placeholder="Clave pública del proyecto"></label>
+    <div class="btn-row"><button class="btn" onclick="configureSupabase()">Comprobar conexión</button><button class="btn ghost" onclick="disconnectSupabase()">Usar solo este dispositivo</button></div>
+   </div>
+   <div class="auth-box">
+    <div class="mini-label">Tu cuenta</div>
+    <div id="authStatus" class="subtitle" style="margin:7px 0">Configura Supabase para iniciar sesión.</div>
+    <div id="authForm" class="form">
+     <label class="field">Nombre visible<input id="authName" placeholder="Gabriel o Salma"></label>
+     <label class="field">Correo electrónico<input id="authEmail" type="email" placeholder="correo@example.com"></label>
+     <label class="field">Contraseña<input id="authPassword" type="password" placeholder="Mínimo 6 caracteres"></label>
+     <div class="auth-grid"><button class="btn" onclick="signUp()">Crear cuenta</button><button class="btn secondary" onclick="signIn()">Iniciar sesión</button></div>
+    </div>
+    <div id="memberInfo" class="hidden"></div>
+    <div class="btn-row"><button class="btn ghost tiny hidden" id="signOutBtn" onclick="signOut()">Cerrar sesión</button></div>
+   </div>
+   <div class="note-box" style="margin-top:13px">No compartan contraseñas. Cada uno entra con su propia cuenta. El acceso está limitado a los UUID añadidos a la tabla <code>couple_members</code>.</div>
+  </article>
+  <article class="card">
+   <div class="mini-label">Cómo ponerlo en marcha</div><h2>Guía para compartir a distancia</h2>
+   <div class="guide-list" style="margin-top:16px">
+    <div class="guide-step"><b>1</b><p><strong>Publica la web.</strong> Sube <code>index.html</code>, <code>config.js</code> y la carpeta <code>assets</code> a GitHub Pages u otro hosting HTTPS.</p></div>
+    <div class="guide-step"><b>2</b><p><strong>Crea un proyecto Supabase.</strong> Ejecuta el archivo <code>supabase_setup.sql</code> desde SQL Editor.</p></div>
+    <div class="guide-step"><b>3</b><p><strong>Configura las claves.</strong> Copia Project URL y la clave pública a <code>config.js</code> o a los campos de arriba.</p></div>
+    <div class="guide-step"><b>4</b><p><strong>Crea las dos cuentas.</strong> Gabriel y Salma se registran con sus propios correos desde esta página.</p></div>
+    <div class="guide-step"><b>5</b><p><strong>Autoriza las cuentas.</strong> En Supabase Authentication &gt; Users copia los dos User UID y añádelos a <code>couple_members</code> con el SQL de la guía.</p></div>
+    <div class="guide-step"><b>6</b><p><strong>Inicien sesión.</strong> Los recuerdos y fotos nuevos se sincronizarán con la misma base de datos.</p></div>
+   </div>
+   <div class="btn-row"><a class="btn secondary tiny" href="GUIA_PARA_COMPARTIR.md" target="_blank">Leer guía completa</a><a class="btn ghost tiny" href="supabase_setup.sql" download>Ver SQL</a></div>
+  </article>
+ </div>
+ <div class="card" style="margin-top:15px">
+  <div class="card-head"><h2>Copias de seguridad</h2><span>⇄</span></div>
+  <p class="subtitle">Exporta una copia JSON de tus recuerdos. En modo local puedes importarla en otro dispositivo; en modo compartido los datos viven en Supabase, pero conservar una copia sigue siendo buena idea.</p>
+  <div class="btn-row"><button class="btn" onclick="exportData()">Exportar recuerdos</button><label class="btn ghost" style="display:inline-block">Importar copia<input id="importFile" type="file" accept="application/json" hidden onchange="importData(event)"></label></div>
+ </div>
+ <div class="card" style="margin-top:15px"><div class="mini-label">Privacidad</div><h2>Un espacio pensado para dos</h2><p class="subtitle">El SQL incluido usa inicio de sesión y políticas RLS. Las fotos van a un bucket privado. No pongas la clave <code>service_role</code> en el sitio y no subas información íntima o sensible. Para permitir el acceso, añade solamente los dos UUID reales a <code>couple_members</code>.</p></div>
+</section>
+
+<div class="footer">✧ Gabriel &amp; Salma ✧<br><em>Un jardín entre dos distancias, lleno de recuerdos por florecer.</em></div>
+</main>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const STORE='npe_shared_space_v3';
+const defaults=()=>({memories:[],letters:[],songs:[],capsules:[],museum:[],dreams:[
+ {id:'dream-1',text:'Tener una cita especial',done:false},{id:'dream-2',text:'Ver una película al mismo tiempo',done:false},{id:'dream-3',text:'Crear una playlist compartida',done:false},{id:'dream-4',text:'Escribirnos cartas a mano',done:false},{id:'dream-5',text:'Hacer un álbum físico',done:false},{id:'dream-6',text:'Visitar un lugar nuevo',done:false},{id:'dream-7',text:'Celebrar nuestro aniversario',done:false},{id:'dream-8',text:'Grabar un vídeo de recuerdos',done:false}
+],traditions:[],events:[],notes:[]});
+let state=defaults(), db=null, session=null, cloudActive=false, realtime=null, currentMember=null;
+let shownMonth=new Date().getMonth(),shownYear=new Date().getFullYear();
+const $=id=>document.getElementById(id);
+const kinds={memory:'memories',letter:'letters',song:'songs',capsule:'capsules',museum:'museum',dream:'dreams',tradition:'traditions',event:'events',note:'notes'};
+function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function uid(){return crypto.randomUUID?crypto.randomUUID():String(Date.now())+'-'+Math.random().toString(36).slice(2)}
+function localSave(){try{localStorage.setItem(STORE,JSON.stringify(state))}catch(e){toast('El navegador no pudo guardar más datos. Exporta una copia.')} }
+function localLoad(){try{const s=JSON.parse(localStorage.getItem(STORE));if(s)state={...defaults(),...s}}catch(e){}}
+function showView(name){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));$('view-'+name)?.classList.add('active');document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===name));const names={home:'Inicio',story:'Nuestra historia',album:'Álbum de fotos',calendar:'Calendario',letters:'Cartas secretas',songs:'Canciones',capsule:'Cápsula del tiempo',museum:'Nuestro museo',questions:'Preguntas para dos',dreams:'Lista de sueños',traditions:'Tradiciones',timeline:'Línea del tiempo',secret:'Espacio secreto',settings:'Configuración y guía'};$('topTitle').textContent=names[name]||'Nuestro espacio';window.scrollTo({top:0,behavior:'smooth'})}
+document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>showView(b.dataset.view)));
+function collection(kind){return state[kinds[kind]]}
+function setCollection(kind,arr){state[kinds[kind]]=arr}
+function updateBadge(){const label=cloudActive?'Espacio compartido':'Modo local';$('syncBadgeText').textContent=label;$('connectionState').innerHTML=`<span class="status-dot"></span><span>${label}</span>`}
+function dateFmt(d){if(!d)return 'Sin fecha';const x=new Date(d.includes('T')?d:d+'T12:00:00');return isNaN(x)?d:x.toLocaleDateString('es-CO',{day:'numeric',month:'short',year:'numeric'})}
+function getCurrentDate(){return new Date().toISOString().slice(0,10)}
+function loadLocal(){localLoad();renderAll();updateBadge()}
+function getDbConfig(){return {url:($('supabaseUrl').value||window.NPE_SUPABASE_URL||'').trim(),key:($('supabaseKey').value||window.NPE_SUPABASE_ANON_KEY||'').trim()}}
+function configStored(){try{return JSON.parse(localStorage.getItem('npe_sb_config')||'{}')}catch(e){return {}}}
+function fillConfig(){const c=configStored();$('supabaseUrl').value=c.url||window.NPE_SUPABASE_URL||'';$('supabaseKey').value=c.key||window.NPE_SUPABASE_ANON_KEY||''}
+async function configureSupabase(){
+ const c=getDbConfig();if(!c.url||!c.key)return toast('Falta la URL y la clave pública de Supabase.');
+ if(!window.supabase?.createClient)return toast('No se pudo cargar Supabase. Revisa tu conexión a internet.');
+ localStorage.setItem('npe_sb_config',JSON.stringify(c));
+ try{
+  db=window.supabase.createClient(c.url,c.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+  $('authStatus').textContent='Conexión con Supabase lista. Inicia sesión con tu cuenta.';
+  const {data,error}=await db.auth.getSession();if(error)throw error;session=data.session;
+  if(session)await handleSession();else{$('authForm').classList.remove('hidden');$('signOutBtn').classList.add('hidden');cloudActive=false;updateBadge();toast('Proyecto conectado. Ahora inicia sesión.')}
+ }catch(e){db=null;cloudActive=false;updateBadge();toast('No se pudo conectar: '+(e.message||'revisa la configuración'))}
+}
+async function restoreSupabase(){
+ fillConfig();const c=getDbConfig();if(!c.url||!c.key)return;
+ if(!window.supabase?.createClient)return;
+ try{db=window.supabase.createClient(c.url,c.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});const {data}=await db.auth.getSession();session=data.session;if(session)await handleSession();else{$('authStatus').textContent='Proyecto configurado. Inicia sesión para abrir el espacio compartido.';updateBadge()}}catch(e){console.warn(e)}
+}
+async function signUp(){
+ if(!db)return toast('Primero comprueba la conexión.');
+ const name=$('authName').value.trim(),email=$('authEmail').value.trim(),password=$('authPassword').value;
+ if(!email||password.length<6)return toast('Escribe tu correo y una contraseña de al menos 6 caracteres.');
+ const {data,error}=await db.auth.signUp({email,password,options:{data:{display_name:name||'Integrante'}}});
+ if(error)return toast(error.message);
+ if(data.session){session=data.session;await handleSession()}else{$('authStatus').textContent='Cuenta creada. Revisa tu correo si Supabase requiere confirmación. Después inicia sesión.';toast('Revisa tu correo para confirmar la cuenta.')}
+}
+async function signIn(){
+ if(!db)return toast('Primero comprueba la conexión.');
+ const email=$('authEmail').value.trim(),password=$('authPassword').value;
+ const {data,error}=await db.auth.signInWithPassword({email,password});
+ if(error)return toast(error.message);session=data.session;await handleSession()
+}
+async function signOut(){if(db)await db.auth.signOut();session=null;cloudActive=false;if(realtime)await db.removeChannel(realtime);realtime=null;localLoad();$('authStatus').textContent='Sesión cerrada. Puedes entrar de nuevo cuando quieras.';$('authForm').classList.remove('hidden');$('memberInfo').classList.add('hidden');$('signOutBtn').classList.add('hidden');updateBadge();toast('Sesión cerrada')}
+async function disconnectSupabase(){if(db&&session)await db.auth.signOut();db=null;session=null;cloudActive=false;if(realtime)try{await realtime.unsubscribe()}catch(e){}realtime=null;localLoad();$('authStatus').textContent='Modo local. Los cambios se guardan solamente en este navegador.';$('authForm').classList.remove('hidden');$('memberInfo').classList.add('hidden');$('signOutBtn').classList.add('hidden');updateBadge();toast('Se está usando el modo local')}
+async function handleSession(){
+ if(!session)return;
+ $('authForm').classList.add('hidden');$('signOutBtn').classList.remove('hidden');
+ $('authStatus').textContent='Sesión iniciada como '+session.user.email;
+ const {data:member,error}=await db.from('couple_members').select('user_id,display_name').eq('user_id',session.user.id).maybeSingle();
+ if(error){$('authStatus').textContent='No se pudo comprobar el acceso. Revisa las tablas y políticas SQL: '+error.message;$('memberInfo').classList.remove('hidden');$('memberInfo').innerHTML=`<p class="subtitle">Tu UUID: <code>${esc(session.user.id)}</code></p>`;cloudActive=false;updateBadge();return}
+ if(!member){$('memberInfo').classList.remove('hidden');$('memberInfo').innerHTML=`<p class="subtitle">Tu cuenta está creada, pero aún no tiene autorización para este espacio. Copia tu UUID y agrégalo a <code>couple_members</code> desde Supabase SQL Editor.</p><div class="code">${esc(session.user.id)}</div><button class="btn ghost tiny" onclick="copyText('${session.user.id}')">Copiar UUID</button>`;$('authStatus').textContent='Falta autorizar esta cuenta para el espacio de pareja.';cloudActive=false;updateBadge();return}
+ currentMember=member;$('memberInfo').classList.remove('hidden');$('memberInfo').innerHTML=`<p class="sync-state"><span class="sync-dot"></span>Acceso autorizado: ${esc(member.display_name)}</p><p class="subtitle" style="margin-top:7px">UUID: <code>${esc(session.user.id)}</code></p>`;
+ cloudActive=true;updateBadge();await loadCloud();
+ if(realtime)await db.removeChannel(realtime);
+ realtime=db.channel('npe-shared-room').on('postgres_changes',{event:'*',schema:'public',table:'shared_items'},()=>loadCloud()).subscribe();
+ toast('¡Espacio compartido conectado! ♡');
+}
+async function loadCloud(){
+ if(!db||!session||!cloudActive)return;
+ const {data,error}=await db.from('shared_items').select('*').order('created_at',{ascending:true});
+ if(error){toast('No se pudieron cargar los recuerdos: '+error.message);return}
+ const fresh=defaults();fresh.dreams=[];
+ for(const row of data||[]){const k=kinds[row.kind];if(!k)continue;const obj={...row.payload,id:row.id,created_at:row.created_at,kind:row.kind};fresh[k].push(obj)}
+ for(const m of fresh.memories){if(m.photo_path){const {data:signed}=await db.storage.from('couple-photos').createSignedUrl(m.photo_path,3600);if(signed)m.photo_url=signed.signedUrl}}
+ state=fresh;renderAll();updateBadge()
+}
+async function persist(kind,payload,id=null){
+ if(cloudActive&&db&&session){
+  let result;
+  if(id)result=await db.from('shared_items').update({payload,updated_at:new Date().toISOString()}).eq('id',id).select().single();
+  else result=await db.from('shared_items').insert({kind,payload,created_by:session.user.id}).select().single();
+  if(result.error){toast('No se pudo guardar: '+result.error.message);return null}
+  await loadCloud();return result.data?.id||id
+ }
+ const arr=collection(kind);const item={...payload,id:id||uid(),kind};
+ if(id){const idx=arr.findIndex(x=>x.id===id);if(idx>=0)arr[idx]=item;else arr.push(item)}else arr.unshift(item);
+ localSave();renderAll();return item.id
+}
+async function removeEntry(kind,id){
+ if(!confirm('¿Quieres eliminar este elemento?'))return;
+ const arr=collection(kind),item=arr.find(x=>x.id===id);
+ if(cloudActive&&db){if(item?.photo_path)await db.storage.from('couple-photos').remove([item.photo_path]);const {error}=await db.from('shared_items').delete().eq('id',id);if(error)return toast(error.message);await loadCloud()}
+ else{setCollection(kind,arr.filter(x=>x.id!==id));localSave();renderAll()}
+ toast('Elemento eliminado')
+}
+async function compressFile(file){
+ return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>{const img=new Image();img.onload=()=>{const scale=Math.min(1,1500/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.round(img.width*scale);c.height=Math.round(img.height*scale);c.getContext('2d').drawImage(img,0,0,c.width,c.height);c.toBlob(b=>b?resolve(b):reject(new Error('No se pudo procesar la imagen')),'image/jpeg',.78)};img.onerror=reject;img.src=r.result};r.onerror=reject;r.readAsDataURL(file)})
+}
+async function addMemory(){
+ const title=$('memTitle').value.trim();if(!title)return toast('Escribe un título para el recuerdo ♡');
+ const file=$('memPhoto').files[0];let payload={title,date:$('memDate').value,desc:$('memDesc').value};
+ if(file){
+  if(cloudActive&&db&&session){try{const blob=await compressFile(file);const path=`${session.user.id}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}.jpg`;const {error}=await db.storage.from('couple-photos').upload(path,blob,{contentType:'image/jpeg',upsert:false});if(error)throw error;payload.photo_path=path}catch(e){return toast('No se pudo subir la foto: '+e.message)}}
+  else{try{const data=await compressFile(file);payload.photo_data=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(data)})}catch(e){return toast('No se pudo procesar la foto')}}
+ }
+ await persist('memory',payload);['memTitle','memDate','memDesc','memPhoto'].forEach(id=>$(id).value='');toast('Recuerdo guardado ♡')
+}
+async function addRecord(kind,fields,ids){const payload={};for(const [key,id] of Object.entries(fields))payload[key]=$(id).value.trim();if(!payload.title&&!payload.name)return toast('Completa el título');if(kind==='letter'&&!payload.body)return toast('Escribe el mensaje');await persist(kind,payload);ids.forEach(id=>$(id).value='');toast('Guardado ♡')}
+async function addLetter(){await addRecord('letter',{title:'letterTitle',from:'letterFrom',body:'letterBody'},['letterTitle','letterFrom','letterBody'])}
+async function addSong(){await addRecord('song',{name:'songName',artist:'songArtist',date:'songDate',why:'songWhy'},['songName','songArtist','songDate','songWhy'])}
+async function addCapsule(){const title=$('capsuleTitle').value.trim(),body=$('capsuleBody').value.trim(),date=$('capsuleDate').value;if(!title||!body||!date)return toast('Completa título, fecha y mensaje');await persist('capsule',{title,body,date});['capsuleTitle','capsuleBody','capsuleDate'].forEach(id=>$(id).value='');toast('Mensaje guardado en la cápsula')}
+async function addMuseum(){await addRecord('museum',{title:'museumTitle',type:'museumType',desc:'museumDesc'},['museumTitle','museumType','museumDesc'])}
+async function addTradition(){await addRecord('tradition',{title:'tradTitle',when:'tradWhen',desc:'tradDesc'},['tradTitle','tradWhen','tradDesc'])}
+async function addEvent(){await addRecord('event',{title:'eventTitle',date:'eventDate',desc:'eventDesc'},['eventTitle','eventDate','eventDesc'])}
+async function addDream(){const text=$('dreamInput').value.trim();if(!text)return;await persist('dream',{text,done:false});$('dreamInput').value='';toast('Sueño agregado ♡')}
+async function toggleDream(d){await persist('dream',{text:d.text,done:!d.done},d.id)}
+async function saveNote(key,value){const existing=state.notes.find(n=>n.key===key);await persist('note',{key,value},existing?.id)}
+async function saveStory(){await saveNote('story',$('storyEditor').value);toast('Historia guardada ♡')}
+async function saveSecret(){await saveNote('secret',$('secretText').value);toast('Mensaje guardado ♡')}
+function copyText(text){navigator.clipboard?.writeText(text);toast('UUID copiado')}
+function itemCard(item,kind,bodyKey='desc',titleKey='title'){
+ return `<article class="item">${item.photo_url||item.photo_data?`<img src="${item.photo_url||item.photo_data}" alt="Fotografía guardada">`:''}<small>${esc(dateFmt(item.date||item.created_at||''))}</small><h3>${esc(item[titleKey]||item.name||'Recuerdo')}</h3>${item.artist?`<p>${esc(item.artist)}</p>`:''}<p>${esc(item[bodyKey]||item.why||item.body||'')}</p><div class="item-actions"><button class="text-link" onclick="removeEntry('${kind}','${item.id}')">Eliminar</button></div></article>`
+}
+function renderAll(){
+ const notes=state.notes||[];const story=notes.find(n=>n.key==='story')?.value;const secret=notes.find(n=>n.key==='secret')?.value;
+ if(document.activeElement!==$('storyEditor'))$('storyEditor').value=story||'Todo comenzó un 22 de julio. Desde entonces hemos compartido mensajes, risas, aprendizajes y momentos que poco a poco se han convertido en parte de nuestra historia. Aquí podemos escribir cómo nos conocimos, qué recordamos de aquellos primeros días y qué significa este camino para nosotros.';
+ if(document.activeElement!==$('secretText'))$('secretText').value=secret||'Gracias por formar parte de mis días. Que nunca nos falten motivos para reír, hablar con sinceridad y seguir creando recuerdos bonitos, a nuestro ritmo. ♡';
+ $('homeStory').textContent=story||'Todo comenzó un 22 de julio. Desde entonces hemos compartido conversaciones, risas, aprendizajes y pequeños momentos que poco a poco se han convertido en parte de nuestra historia.';
+ $('statMemories').textContent=state.memories.length;
+ const done=state.dreams.filter(x=>x.done).length;$('statDreams').textContent=done;
+ $('homeDreams').innerHTML=state.dreams.slice(0,3).map(d=>`<label><input type="checkbox" ${d.done?'checked':''} onchange="toggleDreamById('${d.id}')"><span>${esc(d.text)}</span></label>`).join('')||'<span class="caption">Agreguemos un primer sueño.</span>';
+ $('homeDreamCount').textContent=`${done} de ${state.dreams.length} sueños cumplidos`;
+ $('dreamList').innerHTML=state.dreams.map(d=>`<label class="check ${d.done?'done':''}"><input type="checkbox" ${d.done?'checked':''} onchange="toggleDreamById('${d.id}')"><span>${esc(d.text)}</span></label>`).join('')||'<div class="empty">Todavía no hay sueños. ¡Agreguemos el primero!</div>';
+ $('dreamProgress').style.width=(state.dreams.length?done/state.dreams.length*100:0)+'%';$('dreamSummary').textContent=`${done} / ${state.dreams.length} cumplidos`;
+ $('memoryList').innerHTML=state.memories.map(m=>itemCard(m,'memory')).join('')||'<div class="empty">Aquí aparecerá el primer recuerdo ♡</div>';
+ $('recentMemories').innerHTML=state.memories.slice(0,3).map(m=>itemCard(m,'memory')).join('')||'<div class="empty">Todavía no hay recuerdos. Este espacio espera el primero ♡</div>';
+ $('letterList').innerHTML=state.letters.map(l=>itemCard(l,'letter','body')).join('')||'<div class="empty">Todavía no hay cartas guardadas.</div>';
+ $('songList').innerHTML=state.songs.map(s=>itemCard(s,'song','why','name')).join('')||'<div class="empty">Nuestra banda sonora comienza con la primera canción ♡</div>';
+ $('capsuleList').innerHTML=state.capsules.map(c=>{const open=new Date(c.date+'T00:00:00')<=new Date();return `<article class="item"><small>PARA ABRIR · ${esc(dateFmt(c.date))}</small><h3>${esc(c.title)}</h3><p>${open?esc(c.body):'Este mensaje está guardado para una fecha futura. ¡Todavía no es momento de abrirlo! ♡'}</p><div class="item-actions"><button class="text-link" onclick="removeEntry('capsule','${c.id}')">Eliminar</button></div></article>`}).join('')||'<div class="empty">La cápsula espera sus primeros mensajes.</div>';
+ $('museumList').innerHTML=state.museum.map(m=>itemCard(m,'museum','desc')).join('')||'<div class="empty">Todavía no hay piezas en el museo.</div>';
+ $('traditionList').innerHTML=state.traditions.map(t=>itemCard(t,'tradition','desc')).join('')||'<div class="empty">Aquí aparecerán las tradiciones que inventen.</div>';
+ const events=state.events.slice().sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+ $('timelineList').innerHTML=events.map(e=>itemCard(e,'event','desc')).join('')||'<div class="empty">Su historia irá apareciendo aquí, fecha por fecha ♡</div>';
+ $('calendarEvents').innerHTML=events.map(e=>itemCard(e,'event','desc')).join('')||'<div class="empty">Todavía no hay fechas agregadas.</div>';
+ renderCalendar();updateBadge();
+}
+function toggleDreamById(id){const d=state.dreams.find(x=>x.id===id);if(d)toggleDream(d)}
+const questions=['¿Cuál ha sido tu recuerdo favorito de nosotros hasta ahora?','¿Qué detalle te hace sentir cerca cuando estamos lejos?','¿Qué lugar te gustaría conocer conmigo?','¿Qué canción te recuerda a nosotros y por qué?','¿Qué momento de nuestra historia te gustaría repetir?','¿Qué cosa nueva te gustaría que aprendiéramos juntos?','¿Qué te gustaría que nunca dejáramos de hacer?','¿Cómo sería una cita perfecta a distancia?','¿Qué sueño te emociona compartir?','¿Qué pequeño gesto te alegra un día complicado?'];
+function nextQuestion(){let old=$('questionText').textContent,q=old;while(q===old)q=questions[Math.floor(Math.random()*questions.length)];$('questionText').textContent=q}
+function renderCalendar(){const title=new Date(shownYear,shownMonth,1).toLocaleDateString('es-CO',{month:'long',year:'numeric'});['calendarMonth','calendarMonthBig'].forEach(id=>{if($(id))$(id).textContent=title.charAt(0).toUpperCase()+title.slice(1)});let first=(new Date(shownYear,shownMonth,1).getDay()+6)%7,total=new Date(shownYear,shownMonth+1,0).getDate();let html=['L','M','X','J','V','S','D'].map(x=>`<span class="day">${x}</span>`).join('');for(let i=0;i<first;i++)html+='<span></span>';for(let d=1;d<=total;d++)html+=`<span class="${d===22?'marked':''}">${d===22?'♡':d}</span>`;['calendarGrid','calendarGridBig'].forEach(id=>{if($(id))$(id).innerHTML=html})}
+function changeMonth(delta){shownMonth+=delta;if(shownMonth<0){shownMonth=11;shownYear--}if(shownMonth>11){shownMonth=0;shownYear++}renderCalendar()}
+function exportData(){const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='nuestra-pequena-eternidad-backup.json';a.click();URL.revokeObjectURL(a.href);toast('Copia de seguridad descargada')}
+function importData(e){const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=async()=>{try{const v=JSON.parse(r.result);if(cloudActive){for(const [key,kind] of Object.entries(kinds)){const arr=v[key]||[];for(const obj of arr){const payload={...obj};delete payload.id;delete payload.kind;delete payload.created_at;await persist(kind,payload)}}}else{state={...defaults(),...v};localSave();renderAll()}toast('Copia importada ♡')}catch(err){toast('No se pudo leer la copia')}};r.readAsText(f);e.target.value=''}
+function localInit(){localLoad();renderAll();updateBadge();$('authStatus').textContent='Modo local. Los cambios se guardan solamente en este navegador.'}
+$('todayLabel').textContent=new Date().toLocaleDateString('es-CO',{weekday:'short',day:'numeric',month:'long',year:'numeric'});
+localInit();restoreSupabase();
+</script>
+</body>
+</html>
